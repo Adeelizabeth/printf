@@ -15,7 +15,7 @@ int print_pointer(va_list share, char buffer[],
 		int flags, int width, int precision, int size)
 {
 	char extra_c = 0, padd = ' ';
-	int ind = BUFF_SIZE - 2, length = 2, padd_start = 1; /* length=2, for '0x'*/
+	int out = BUFF_SIZE - 2, length = 2, padd_start = 1; /* length=2, for '0x'*/
 	unsigned long num_addrs;
 	char map_to[] = "0123456789abcdef";
 	void *addrs = va_arg(share, void *);
@@ -55,27 +55,25 @@ int print_pointer(va_list share, char buffer[],
  * @size: Size specifier
  * Return: Number of chars printed
  */
+int i = 0, offset = 0;
+char *str = va_arg(share, char *);
 
-{
-	int i = 0, offset = 0;
-	char *str = va_arg(share, char *);
-
-	UNUSED(flags);
-	UNUSED(width);
-	UNUSED(precision);
-	UNUSED(size);
-	if (str == NULL)
-		return (write(1, "(null)", 6));
+UNUSED(flags);
+UNUSED(width);
+UNUSED(precision);
+UNUSED(size);
+if (str == NULL)
+	return (write(1, "(null)", 6));
 	while (str[i] != '\0')
-	{
-		if (is_printable(str[i]))
-			buffer[i + offset] = str[i];
-		else
-			offset += append_hexa_code(str[i], buffer, i + offset);
-		i++;
-	}
-	buffer[i + offset] = '\0';
-	return (write(1, buffer, i + offset));
+{
+	if (is_printable(str[i]))
+		buffer[i + offset] = str[i];
+	else
+		offset += append_hexa_code(str[i], buffer, i + offset);
+	i++;
+}
+buffer[i + offset] = '\0';
+return (write(1, buffer, i + offset));
 }
 /************************* PRINT REVERSE *************************/
 /**
@@ -125,29 +123,31 @@ int print_reverse(va_list share, char buffer[],
 	int print_rot13string(va_list share, char buffer[],
 			int flags, int width, int precision, int size)
 	{
-		char x, *str;
-		unsigned int i, j;
-		int count = 0;
+		{
 
-		char in[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-		char out[] = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";
-		str = va_arg(share, char *);
-		UNUSED(buffer),	UNUSED(flags), UNUSED(width), UNUSED(precision), UNUSED(size);
-		if (str == NULL)
-			str = "(AHYY)";
-		for (i = 0; str[i]; i++)
-		{ for (j = 0; in[j]; j++)
-			{
-				if (in[j] == str[i])
-				{	x = out[j];
-					write(1, &x, 1);
-					count++;
-					break;
+			char x, *str;
+			unsigned int i, j;
+			int count = 0;
+
+			char in[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+			char out[] = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";
+			str = va_arg(share, char *);
+			UNUSED(buffer),	UNUSED(flags), UNUSED(width), UNUSED(precision), UNUSED(size);
+			if (str == NULL)
+				str = "(AHYY)";
+			for (i = 0; str[i]; i++)
+			{ for (j = 0; in[j]; j++)
+				{
+					if (in[j] == str[i])
+					{	x = out[j];
+						write(1, &x, 1);
+						count++;
+						break;
+					}
 				}
+				if (!in[j])
+					count++;
 			}
-			if (!in[j])
-				count++;
 		}
+		return (count);
 	}
-	return (count);
-}

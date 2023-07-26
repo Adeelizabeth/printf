@@ -27,6 +27,5 @@ int get_flags(const char *format, int *i)
 	}
 	*i = tur_i - 1;
 	return (flags);
-	i
 }
 
