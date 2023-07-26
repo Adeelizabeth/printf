@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define UNUSED(x) (void)(x)
+#define UNUSED(x) do{(void)(x);} while (0)
 #define BUFF_SIZE 1024
 
 /* FLAGS */
